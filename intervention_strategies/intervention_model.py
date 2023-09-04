@@ -5,7 +5,7 @@ Created on Wed Mar 22 11:13:00 2023
 
 @author: gabriela
 """
-import time
+
 import numpy as np
 
 import covid19
@@ -31,8 +31,6 @@ def run_intervention_model( ranked_method,
                             time_infection = 'estimation', #'constant' or True
                             quarantined_random_interactions = 0):
             
-    inicio = time.time()
-    
     params = Parameters(input_param_file="../tests/data/baseline_parameters.csv",
                         param_line_number = 1,
                         output_file_dir="../data_test",
@@ -215,7 +213,7 @@ def run_intervention_model( ranked_method,
         timeseries_sim['n_quarantine'].append(len(to_quarantine)) 
         timeseries_sim['n_tests'].append(len(TP))
         
-        print('time:', t, 'detected by risk:',len(TP_risk)) 
+        #print('time:', t, 'detected by risk:',len(TP_risk)) 
         
         #to save the results
         if t % save_every_iter == 0:            
@@ -223,8 +221,8 @@ def run_intervention_model( ranked_method,
 
     df_timeseries_sim = ranked_method.save_results(timeseries_sim, t_end)   
     
-    fin = time.time()
     
-    print('total running time for seed', seed, ':', fin - inicio)
+    
+    print('CT method for seed', seed)
     
     return df_timeseries_sim
