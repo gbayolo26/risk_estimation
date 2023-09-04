@@ -1,7 +1,7 @@
 # risk_estimation
 ## Test allocation based on risk of infection from first and second order contact tracing for Covid-19
 
-This code contains four interventions methods that combines testing, contact tracing, and quarantine to mitigate the propagation of Covid-19,
+This repository contains four interventions methods to mitigate the propagation of Covid-19, 
 
  - First degree contact tracing
 * Second degree contact tracing
