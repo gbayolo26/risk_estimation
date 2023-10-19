@@ -388,9 +388,8 @@ class Second_Degree_Contact_Tracing_Risk:
         name_file_res = 'timeseries_2_CT_p_'+str(self.prob_function)+'_n_total_'+str(self.n_total)+'_N0_'+str(self.initial_inf)+'_t_start_'+str(self.t_start)+'_eta_'+str(self.test_availables)+'_gamma_'+str(self.gamma)+'_zeta_'+str(self.zeta)+'_qh_'+str(self.quarantine_household)+'_th_'+str(self.test_household)+'_p_SS_'+str(self.p_SS)+'_p_SM_'+str(self.p_SM)+'_seed_'+str(self.seed)+'_seed_open_ABM_'+str(self.seed_open_ABM)+'_ti_'+str(self.time_infection)+'_qri_'+str(self.quarantined_random_interactions)                  
         name_data_test = 'data_test_2_CT_p_'+str(self.prob_function)+'_n_total_'+str(self.n_total)+'_N0_'+str(self.initial_inf)+'_t_start_'+str(self.t_start)+'_eta_'+str(self.test_availables)+'_gamma_'+str(self.gamma)+'_zeta_'+str(self.zeta)+'_qh_'+str(self.quarantine_household)+'_th_'+str(self.test_household)+'_p_SS_'+str(self.p_SS)+'_p_SM_'+str(self.p_SM)+'_seed_'+str(self.seed)+'_seed_open_ABM_'+str(self.seed_open_ABM)+'_ti_'+str(self.time_infection)+'_qri_'+str(self.quarantined_random_interactions)                  
                        
-        df_timeseries = f_time_to_detection(timeseries, self.data_test)    
-        df_timeseries['det_prop'] = (df_timeseries['detected_R'] + df_timeseries['detected_H'])/(df_timeseries['active'] - df_timeseries['detected_active'] + df_timeseries['detected_R']+ df_timeseries['detected_H'])
-    
+        df_timeseries = pd.DataFrame(timeseries)
+        
         if len(df_timeseries) < t_end:
     
             df_timeseries = pd.merge(pd.DataFrame({'time': range(t_end)}), df_timeseries, how="outer")
