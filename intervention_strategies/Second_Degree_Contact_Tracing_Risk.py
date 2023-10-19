@@ -14,13 +14,13 @@ from.First_Degree_Contact_Tracing_Risk import f_first_contacts_risk, f_first_int
 def f_risk_first_contacts_by_time(df_FI):
     """
     This function compute:
-      - the probability of being infected for a first degree contact at each time 
+      - the probability of being infected for a 1°contact at each time 
       
     inputs:
         df_FI : first degree interactions dataframe 
         
     outputs:
-        df_FI : data frame for first degree contacts, time and probability of being infected at each time 
+        df_FI : data frame for first degree contacts, with the probability of being infected at each time 
     """
     
     df_FI = df_FI.sort_values(['ID_2', 'time'])
@@ -38,17 +38,17 @@ def f_risk_first_contacts_by_time(df_FI):
 def f_CRisk_1(df_FI):
     """
     This function compute:
-      - the cumulative product of the complementary probability of being infected for each first case in time 
+      - the cumulative product of 1-probability of being infected for each first case in time 
       
     inputs:
         df_FI : first degree interactions dataframe 
         
     outputs:
         df_Comp_Risk_1 : data frame with columns
-                         ID_2: first degree contacts 
+                         ID_2: column of 1°contacts 
                          time: time
                          Prob: probability of being infected at each time
-                         Comp_Risk_1: the cumulative product of the complementary probability of being infected for each first case in time
+                         Comp_Risk_1: the cumulative product of 1-probability of being infected for each 1°contact at each time
                          D_Comp_Risk_1: Comp_Risk_1 outdated one day and putting 1 in the first position
     """
     
@@ -67,17 +67,17 @@ def f_CRisk_1(df_FI):
 
 
 
-def f_second_interactions( df_FI_W , Data, df_test, t, delta):
+def f_second_interactions( df_FI_W , Data, df_test, t, zeta):
          
     """
-    This function compute the second degree interactions,
+    This function compute the 2°interactions,
          
     inputs:
-        df_FI_W  : The first degree interactions
+        df_FI_W  : 1°interactions
         Data : all interactions from the Open ABM Model
         df_test : Data frame with test information
         t : day of intervention
-        delta: consider the interactions in the last delta days
+        zeta: time-frame for the time of infection for the 1°contact
         
     outputs:
         df_SI_W : The second degree intercations 
@@ -91,7 +91,7 @@ def f_second_interactions( df_FI_W , Data, df_test, t, delta):
     if len(df_FI_W)>0:
         
         #to filter the second degree interactions
-        time_active = list(range(t - delta , t + 1))        
+        time_active = list(range(t - zeta , t + 1))        
         fc = df_FI_W ['ID_2'].unique() #first degree contacts    
         df_SI = Data[Data.time.isin(time_active) & Data.ID.isin(fc) & ~Data.ID_2.isin(all_TP) ]     
         df_SI = df_SI.sort_values(['ID']) # sort the data frame by the first degree contacts
@@ -115,18 +115,16 @@ def f_second_interactions( df_FI_W , Data, df_test, t, delta):
     
     return df_SI
 
-
-
 def f_second_risk_data(df_FI, df_SI_W, prob_function, Sa):
      
     """
-    This function compute the risk 2 formula for each interaction between a first and a second degree contact,         
+    This function compute the 2°CT risk formula for each interaction between a 1° and a 2° contact,         
     inputs:
-        df_FI_W : The first degre intercations
-        df_SI_W : The second degree intercations         
+        df_FI_W : 1°interactions
+        df_SI_W : 2°interactions         
     outputs:
-        data : the Column 'Comp_Risk_2_1' represent the probability that the individual 1 non infects the individual 2 in all posibles interactions times, for each partner of contacts
-               (the number of rows of data is the number of posibles interactions between ID_1 and ID_2 without repetitions)
+        data : the Column 'Comp_Risk_2_1' represent the probability that each 1° contact  non infects each 2° contact in all posibles interactions times
+             
     """ 
     
     if prob_function == 0:
@@ -159,16 +157,12 @@ def f_second_risk_data(df_FI, df_SI_W, prob_function, Sa):
     
     return df_risk
 
-
- 
-
 def f_second_contacts_risk(df_FI, df_SI_W, n_total, prob_function, Sa):
     
     """
-    This function compute the risk for second degree contacts
+    This function compute the risk for 2°contacts
     
-    """
-    
+    """    
     data = f_second_risk_data(df_FI, df_SI_W, prob_function, Sa)
    
     df = data.groupby(["ID_2"], as_index=False).agg({'Comp_Risk_2_1': 'prod'})    
@@ -185,7 +179,7 @@ def f_second_contacts_risk(df_FI, df_SI_W, n_total, prob_function, Sa):
 def f_global_risk(df_FI, df_SI, data_test, prob_function, Sa, t, gamma):
     
     """
-    This function compute the risk for first and second degree contacts
+    This function compute the risk for 1° and 2° contacts
     
     """
     
@@ -216,10 +210,10 @@ def f_global_risk(df_FI, df_SI, data_test, prob_function, Sa, t, gamma):
 
 class Second_Degree_Contact_Tracing_Risk:
         
-    def __init__(self, gamma, delta, prob_function):
+    def __init__(self, gamma, zeta, prob_function):
         self.description = "class for second degree contact tracing method."   
         self.gamma = gamma 
-        self.delta = delta        
+        self.zeta = zeta        
         self.prob_function = prob_function
           
         
@@ -356,7 +350,7 @@ class Second_Degree_Contact_Tracing_Risk:
         '''
         
         #To save recent interactions
-        self.recent_contacts = [(col[0], col[1], col[2], col[3]) for col in self.recent_contacts if col[2] != t - self.delta -1]     
+        self.recent_contacts = [(col[0], col[1], col[2], col[3]) for col in self.recent_contacts if col[2] != t - self.zeta -1]     
         self.recent_contacts.extend(daily_contacts)
         
         if t >= self.t_start:            
@@ -391,8 +385,8 @@ class Second_Degree_Contact_Tracing_Risk:
                 
     def save_results(self, timeseries, t_end):        
                           
-        name_file_res = 'timeseries_2_CT/timeseries_2_CT_p_'+str(self.prob_function)+'_n_total_'+str(self.n_total)+'_N0_'+str(self.initial_inf)+'_t_start_'+str(self.t_start)+'_eta_'+str(self.test_availables)+'_gamma_'+str(self.gamma)+'_delta_'+str(self.delta)+'_qh_'+str(self.quarantine_household)+'_th_'+str(self.test_household)+'_p_SS_'+str(self.p_SS)+'_p_SM_'+str(self.p_SM)+'_seed_'+str(self.seed)+'_seed_open_ABM_'+str(self.seed_open_ABM)+'_ti_'+str(self.time_infection)+'_qri_'+str(self.quarantined_random_interactions)                  
-        name_data_test = 'timeseries_2_CT/data_test_2_CT_p_'+str(self.prob_function)+'_n_total_'+str(self.n_total)+'_N0_'+str(self.initial_inf)+'_t_start_'+str(self.t_start)+'_eta_'+str(self.test_availables)+'_gamma_'+str(self.gamma)+'_delta_'+str(self.delta)+'_qh_'+str(self.quarantine_household)+'_th_'+str(self.test_household)+'_p_SS_'+str(self.p_SS)+'_p_SM_'+str(self.p_SM)+'_seed_'+str(self.seed)+'_seed_open_ABM_'+str(self.seed_open_ABM)+'_ti_'+str(self.time_infection)+'_qri_'+str(self.quarantined_random_interactions)                  
+        name_file_res = 'timeseries_2_CT_p_'+str(self.prob_function)+'_n_total_'+str(self.n_total)+'_N0_'+str(self.initial_inf)+'_t_start_'+str(self.t_start)+'_eta_'+str(self.test_availables)+'_gamma_'+str(self.gamma)+'_zeta_'+str(self.zeta)+'_qh_'+str(self.quarantine_household)+'_th_'+str(self.test_household)+'_p_SS_'+str(self.p_SS)+'_p_SM_'+str(self.p_SM)+'_seed_'+str(self.seed)+'_seed_open_ABM_'+str(self.seed_open_ABM)+'_ti_'+str(self.time_infection)+'_qri_'+str(self.quarantined_random_interactions)                  
+        name_data_test = 'data_test_2_CT_p_'+str(self.prob_function)+'_n_total_'+str(self.n_total)+'_N0_'+str(self.initial_inf)+'_t_start_'+str(self.t_start)+'_eta_'+str(self.test_availables)+'_gamma_'+str(self.gamma)+'_zeta_'+str(self.zeta)+'_qh_'+str(self.quarantine_household)+'_th_'+str(self.test_household)+'_p_SS_'+str(self.p_SS)+'_p_SM_'+str(self.p_SM)+'_seed_'+str(self.seed)+'_seed_open_ABM_'+str(self.seed_open_ABM)+'_ti_'+str(self.time_infection)+'_qri_'+str(self.quarantined_random_interactions)                  
                        
         df_timeseries = f_time_to_detection(timeseries, self.data_test)    
         df_timeseries['det_prop'] = (df_timeseries['detected_R'] + df_timeseries['detected_H'])/(df_timeseries['active'] - df_timeseries['detected_active'] + df_timeseries['detected_R']+ df_timeseries['detected_H'])
@@ -405,8 +399,12 @@ class Second_Degree_Contact_Tracing_Risk:
         self.data_test.to_csv(self.output_dir + name_data_test+".csv")        
         
         return df_timeseries
+      
+    def name(self):
+        
+        return '2°CT'     
     
     def get_info(self):
         
-        return self.data_test
-        #return self.first_interactions, self.second_interactions, self.data_test , self.recent_contacts  
+        return self.first_interactions, self.second_interactions, self.data_test        
+  

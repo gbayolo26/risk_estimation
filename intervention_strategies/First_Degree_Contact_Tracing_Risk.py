@@ -13,7 +13,7 @@ from.utils import f_compute_transmission_probability, f_time_to_detection, f_com
 def f_first_interactions(recent_contacts, data_test, t , prob_function, Sa):
    
     """
-    This function compute the first degree interactions,
+    This function compute the 1°interactions,
          
     inputs:
         recent_contacts : The recent interactions from the Open ABM Model
@@ -30,7 +30,7 @@ def f_first_interactions(recent_contacts, data_test, t , prob_function, Sa):
     infected_period = 20
     time_active_test = list(range(max(0, t - infected_period), t))
     index_cases = data_test[data_test.result.isin([1]) & data_test.pos_tim_inf.isin(time_active_test) & ~data_test.time.isin([t])]['ID'] 
-       
+        
     df_FI = pd.DataFrame(recent_contacts, columns = ['ID', 'ID_2', 'time', 'type'])     
     df_FI  = df_FI[df_FI.ID.isin(index_cases ) & ~df_FI.ID_2.isin(all_TP) ] 
     
@@ -140,9 +140,7 @@ class First_Degree_Contact_Tracing_Risk:
         self.noisse = np.random.random(n_total)
         
         return True
-    
-
-    
+        
     def test_observations_symptomps_upgrade(self, individuals_SS, individuals_SM, t):
         
         idx_test_positive_SS = self.data_test.ID.isin(individuals_SS)        
@@ -224,7 +222,7 @@ class First_Degree_Contact_Tracing_Risk:
     
     def rank(self, t, daily_contacts):
         '''
-        to compute the 1CT risk of individuals 
+        to compute the 1°CT risk of individuals 
         return: list of ranked individuals
         '''
         
@@ -253,8 +251,8 @@ class First_Degree_Contact_Tracing_Risk:
                 
     def save_results(self, timeseries, t_end):        
                           
-        name_file_res = 'timeseries_1_CT/timeseries_1_CT_p_'+str(self.prob_function)+'_n_total_'+str(self.n_total)+'_N0_'+str(self.initial_inf)+'_t_start_'+str(self.t_start)+'_eta_'+str(self.test_availables)+'_gamma_'+str(self.gamma)+'_qh_'+str(self.quarantine_household)+'_th_'+str(self.test_household)+'_p_SS_'+str(self.p_SS)+'_p_SM_'+str(self.p_SM)+'_seed_'+str(self.seed)+'_seed_open_ABM_'+str(self.seed_open_ABM)+'_ti_'+str(self.time_infection)+'_qri_'+str(self.quarantined_random_interactions)
-        name_data_test = 'timeseries_1_CT/data_test_1_CT_p_'+str(self.prob_function)+'_n_total_'+str(self.n_total)+'_N0_'+str(self.initial_inf)+'_t_start_'+str(self.t_start)+'_eta_'+str(self.test_availables)+'_gamma_'+str(self.gamma)+'_qh_'+str(self.quarantine_household)+'_th_'+str(self.test_household)+'_p_SS_'+str(self.p_SS)+'_p_SM_'+str(self.p_SM)+'_seed_'+str(self.seed)+'_seed_open_ABM_'+str(self.seed_open_ABM)+'_ti_'+str(self.time_infection)+'_qri_'+str(self.quarantined_random_interactions)
+        name_file_res = 'timeseries_1_CT_p_'+str(self.prob_function)+'_n_total_'+str(self.n_total)+'_N0_'+str(self.initial_inf)+'_t_start_'+str(self.t_start)+'_eta_'+str(self.test_availables)+'_gamma_'+str(self.gamma)+'_qh_'+str(self.quarantine_household)+'_th_'+str(self.test_household)+'_p_SS_'+str(self.p_SS)+'_p_SM_'+str(self.p_SM)+'_seed_'+str(self.seed)+'_seed_open_ABM_'+str(self.seed_open_ABM)+'_ti_'+str(self.time_infection)+'_qri_'+str(self.quarantined_random_interactions)
+        name_data_test = 'data_test_1_CT_p_'+str(self.prob_function)+'_n_total_'+str(self.n_total)+'_N0_'+str(self.initial_inf)+'_t_start_'+str(self.t_start)+'_eta_'+str(self.test_availables)+'_gamma_'+str(self.gamma)+'_qh_'+str(self.quarantine_household)+'_th_'+str(self.test_household)+'_p_SS_'+str(self.p_SS)+'_p_SM_'+str(self.p_SM)+'_seed_'+str(self.seed)+'_seed_open_ABM_'+str(self.seed_open_ABM)+'_ti_'+str(self.time_infection)+'_qri_'+str(self.quarantined_random_interactions)
                         
         df_timeseries = f_time_to_detection(timeseries, self.data_test)    
         df_timeseries['det_prop'] = (df_timeseries['detected_R'] + df_timeseries['detected_H'])/(df_timeseries['active'] - df_timeseries['detected_active'] + df_timeseries['detected_R']+ df_timeseries['detected_H'])
@@ -271,3 +269,7 @@ class First_Degree_Contact_Tracing_Risk:
     def get_info(self):
         
         return self.data_test, self.first_interactions
+    
+    def name(self):
+        
+        return '1°CT'

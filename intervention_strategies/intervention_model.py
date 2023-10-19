@@ -41,7 +41,7 @@ def run_intervention_model( ranked_method,
     params.set_param( "end_time", t_end)
     params.set_param( "n_seed_infection", initial_inf)
     params.set_param( "rng_seed", seed_open_ABM)
-    params.set_param( "quarantined_daily_interactions", quarantined_random_interactions)#1 quarantine only at work, 0 work and random
+    params.set_param( "quarantined_daily_interactions", quarantined_random_interactions)#1: quarantine only at work, 0: work and random
                            
     #to iniatilize the open ABM model
     model = simulation.COVID19IBM(model = Model(params))
@@ -219,10 +219,8 @@ def run_intervention_model( ranked_method,
         if t % save_every_iter == 0:            
             ranked_method.save_results(timeseries_sim, t)
 
-    df_timeseries_sim = ranked_method.save_results(timeseries_sim, t_end)   
+    df_timeseries_sim = ranked_method.save_results(timeseries_sim, t_end)      
     
-    
-    
-    print('CT method for seed', seed)
+    print('Total infected at time', t_end , 'for', ranked_method.name(), ':', n_total - Sucep)
     
     return df_timeseries_sim
