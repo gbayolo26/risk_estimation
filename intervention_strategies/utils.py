@@ -63,8 +63,7 @@ def f_compute_weigth_ABM(time, status, age, network, Sa):
                                                         dtype=np.int8)        
     vector_age = age_sparse_matrix * Sa
     
-    #scale factor for the network on which the interaction ocurred(n: type of network: random, household and differents types of  works)
-    
+    #scale factor for the network on which the interaction ocurred(n: type of network: random, household and differents types of  works)    
     Bn = [2, 1, 1]    
     matrix_network = np.zeros((n_rows, len(Bn)))    
     network = np.array(network)    
@@ -104,75 +103,42 @@ def f_compute_transmission_probability(df, prob_function, Sa):
        prob =  pd.Series(result, index=df.index, name='result')   
     
     return prob
-
-def f_compute_infectiousness(time_since_infection, status):
-       
-    time = np.array(time_since_infection)    
-    n_rows = len(status)        
-    # relative infectiousness of the source based on the disease severity (asymptomatic, mild, moderate/severe)
-    # suceptible(false positive) it is considered as asymptomatics
-    # 0 (suceptible), 3 (asymptomatic), 1-4 (pre-severe,severe), 2-5 (pre-mild,mild) 
     
-    k = 1    
-    #Ad = [0.25 * k, k, 0.48* k, 0.25* k, k, 0.48 * k, 0, 0, 0, 0, 0]
-    Ad = [0, k, 0.48* k, 0.29* k, k, 0.48 * k, 0, 0, 0, 0, 0]
+def f_time_to_detection(data_timeseries, data_test):
     
-    matrix_status = np.zeros((n_rows, len(Ad)))    
-    status = np.array(status)    
-    data = np.ones(n_rows)    
-    row = np.arange(n_rows)    
-    status_sparse_matrix = scipy.sparse.coo_matrix((data, (row, status)), 
-                                                           shape=matrix_status.shape, 
-                                                           dtype=np.int8)  
-    vector_status = status_sparse_matrix * Ad
-    
-    #mean and width parameters from gamma density function
-    mn = 6    
-    sd = 2.5      
-    scale = (sd**2)/mn
-    shape = mn/scale    
-    f = gamma.cdf(time , shape, scale) - gamma.cdf(time - 1, shape, scale) 
-    #f = gamma.cdf(time + 1 , shape, scale) - gamma.cdf(time, shape, scale)                   
-    infectiousness = vector_status*f
-    
-    return infectiousness
-    
-def f_time_to_detection(data,  data_test):
-    
-    timeseries_sim = pd.DataFrame(data)
+    timeseries_sim = pd.DataFrame(data_timeseries)
     
     t_end = len(timeseries_sim)    
     data_test['time_to_detection'] =  data_test['time']  - data_test['time_infected']
-    data_test['infectiousness'] =  f_compute_infectiousness(data_test['time']  - data_test['time_infected'], data_test['observed_status'])
     
     #individuals detected
-    data = data_test[data_test['result'] == 1][['time', 'time_to_detection', 'infectiousness']]       
+    data = data_test[data_test['result'] == 1][['time', 'time_to_detection']]       
     df = data.groupby(['time'], as_index=False).agg('sum')
-    df.columns = ['time', 'sum_time', 'sum_infectiousness']        
+    df.columns = ['time', 'sum_time']        
+    
     # Put nan in others values
     df_new = pd.merge(pd.DataFrame({'time': range(t_end)}), df, how="outer")
     timeseries_sim['sum_time_det'] = df_new['sum_time']
-    timeseries_sim['sum_inf']  = df_new['sum_infectiousness']
-    
+        
     #individuals detected by symptoms
-    data_S = data_test[data_test['type'] == 0][['time', 'time_to_detection', 'infectiousness']]       
+    data_S = data_test[data_test['type'] == 0][['time', 'time_to_detection']]       
     #df_S = data_S.groupby(['time'], as_index=False).agg({'time_to_detection': 'mean'})
     df_S = data_S.groupby(['time'], as_index=False).agg('sum')
-    df_S.columns = ['time', 'sum_time', 'sum_infectiousness']       
+    df_S.columns = ['time', 'sum_time']
+       
     # Put nan in others values
     df_Symp = pd.merge(pd.DataFrame({'time': range(t_end)})  , df_S, how="outer")
     #df_Symp.fillna(0)
     timeseries_sim['sum_time_det_S'] = df_Symp['sum_time']
-    timeseries_sim['sum_inf_S']  = df_Symp['sum_infectiousness']
     
     #individuals detected by risk
-    data_R = data_test[data_test['type'] == 1][['time', 'time_to_detection', 'infectiousness']]       
+    data_R = data_test[data_test['type'] == 1][['time', 'time_to_detection']]       
     df_R = data_R.groupby(['time'], as_index=False).agg('sum')
-    df_R.columns = ['time', 'sum_time', 'sum_infectiousness']       
+    df_R.columns = ['time', 'sum_time']
+       
     # Put nan in others values
     df_Risk = pd.merge(pd.DataFrame({'time': range(t_end)})  , df_R, how="outer")
     #df_Symp.fillna(0)
     timeseries_sim['sum_time_det_R'] = df_Risk['sum_time']
-    timeseries_sim['sum_inf_R'] = df_Risk['sum_infectiousness']   
     
     return timeseries_sim
