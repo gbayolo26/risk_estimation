@@ -25,3 +25,6 @@ The [test allocation notebook](https://github.com/gbayolo26/intervention_strateg
 Gabriela Bayolo Soler (gabriela.bayolo-soler@utc.fr)
 
 <img src="https://github.com/gbayolo26/risk_estimation/assets/79975920/15c5674b-59bc-427e-b303-1578adeb0de6" width="120" height="50">
+
+### Licence
+[Apache-2.0 licence](https://github.com/gbayolo26/intervention_strategies/blob/main/LICENCE)
