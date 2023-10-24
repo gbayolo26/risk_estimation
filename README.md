@@ -20,3 +20,7 @@ The code requires to install [the OpenABM-Covid19](https://github.com/aleingross
 
 ### Usage
 The [test allocation notebook](https://github.com/gbayolo26/intervention_strategies/blob/main/Test_allocation.ipynb) contains an example of how to run the model
+
+### Maintainers
+Gabriela Bayolo Soler (gabriela.bayolo-soler@utc.fr)
+ logo utc!!!
