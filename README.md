@@ -24,6 +24,9 @@ The [test allocation notebook](https://github.com/gbayolo26/intervention_strateg
 ### Maintainers
 Gabriela Bayolo Soler (gabriela.bayolo-soler@utc.fr)
 
+![utc](https://github.com/gbayolo26/risk_estimation/assets/79975920/15c5674b-59bc-427e-b303-1578adeb0de6 | width=100)
+
+
 ![utc](https://github.com/gbayolo26/risk_estimation/assets/79975920/20656fba-4945-4268-bbef-e1007ecdfd80.png)
 
 ![utc](https://github.com/gbayolo26/risk_estimation/assets/79975920/20656fba-4945-4268-bbef-e1007ecdfd80)
