@@ -3,10 +3,10 @@
 
 This repository contains four interventions methods to mitigate the propagation of Covid-19, 
 
- - First degree contact tracing  ([code here](https://github.com/gbayolo26/risk_estimation/blob/main/intervention_strategies/Contact_Tracing.py))
-* Second degree contact tracing
-+ Usual contact tracing
-- Random selection
+ - First degree contact tracing  ([code here](https://github.com/gbayolo26/risk_estimation/blob/main/intervention_strategies/First_Degree_Contact_Tracing_Risk.py))
+* Second degree contact tracing  ([code here](https://github.com/gbayolo26/risk_estimation/blob/main/intervention_strategies/Second_Degree_Contact_Tracing_Risk.py))
++ Usual contact tracing ([code here](https://github.com/gbayolo26/risk_estimation/blob/main/intervention_strategies/Contact_Tracing.py))
+- Random selection ([code here](https://github.com/gbayolo26/risk_estimation/blob/main/intervention_strategies/Random_Selection.py))
 
 For more information see paper (to put link here). 
   
