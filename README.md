@@ -10,7 +10,7 @@ This repository contains four interventions methods to mitigate the propagation 
 
 For more information see paper (to put link here). 
   
- We evaluate interventions based on our risk ranking through simulations of a fairly realistic agent-based model calibrated for COVID-19 epidemic outbreak ([the Oxford OpenABM model](https://github.com/BDI-pathogens/OpenABM-Covid19)). 
+ We evaluate the non pharmaceutical interventions based on our risk ranking through simulations of a fairly realistic agent-based model calibrated for COVID-19 epidemic outbreak ([the Oxford OpenABM model](https://github.com/BDI-pathogens/OpenABM-Covid19)). 
  This agent based model simulates the spread of the COVID-19 disease in a population with demographic structure based upon UK census data.  
  
  It permit to test containment strategies, in fact, contact tracing techniques such as the proposed can be easily integrated using the following version: [https://github.com/aleingrosso/OpenABM-Covid19](https://github.com/aleingrosso/OpenABM-Covid19). 
