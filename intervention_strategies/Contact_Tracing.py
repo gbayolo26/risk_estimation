@@ -54,7 +54,8 @@ class Contact_Tracing:
         self.gamma = gamma  
             
     def init(self, n_total, initial_inf, t_0, test_availables, quarantine_household, test_household, p_SS, p_SM, seed, seed_open_ABM,
-             day_since_infected_sympthoms, output_dir, age_group, house_no, real_time_infection, quarantined_random_interactions):
+             day_since_infected_sympthoms, output_dir, age_group, house_no, real_time_infection, quarantined_random_interactions, test_symptoms_type, 
+             quarantine_adoption_fraction, tp_rate, tn_rate):
          
         self.n_total = n_total
         self.initial_inf = initial_inf
@@ -69,6 +70,10 @@ class Contact_Tracing:
         self.day_since_infected_sympthoms = day_since_infected_sympthoms
         self.output_dir = output_dir
         self.quarantined_random_interactions = quarantined_random_interactions 
+        self.test_symptoms_type = test_symptoms_type
+        self.quarantine_adoption_fraction = quarantine_adoption_fraction
+        self.tp_rate = tp_rate
+        self.tn_rate = tn_rate
                 
         # initialize first degree interactions 
         self.first_contacts = pd.DataFrame(columns = ['ID', 'ID_2', 'time', 'type']) 
@@ -88,16 +93,19 @@ class Contact_Tracing:
            
         return True   
     
-    def test_observations_symptomps_upgrade(self, individuals_SS, individuals_SM, t):
+    def test_observations_symptomps_upgrade(self, individuals_SS, TN_SS, individuals_SM, TN_SM, t):
         
+        individuals_SS = list(individuals_SS)
         self.data_test['time'][individuals_SS] = t            
         self.data_test['result'][individuals_SS] = 1            
         
+        individuals_SM = list(individuals_SM)
         self.data_test['time'][individuals_SM] = t            
         self.data_test['result'][individuals_SM] = 1       
                 
         return True
     
+      
     def test_observations_house_upgrade(self, TP_house, TN_house, status, t):
          
         self.data_test['time'][TP_house] = t            
@@ -159,11 +167,13 @@ class Contact_Tracing:
         
         return 'CT'
         
-    def save_results(self, timeseries, t_end):        
-                          
-        name_file_res = 'timeseries_CT_n_total_'+str(self.n_total)+'_N0_'+str(self.initial_inf)+'_t_start_'+str(self.t_0)+'_eta_'+str(self.test_availables)+'_gamma_'+str(self.gamma)+'_qh_'+str(self.quarantine_household)+'_th_'+str(self.test_household)+'_p_SS_'+str(self.p_SS)+'_p_SM_'+str(self.p_SM)+'_seed_'+str(self.seed)+'_seed_open_ABM_'+str(self.seed_open_ABM)+'_qri_'+str(self.quarantined_random_interactions)
-        name_data_test = 'data_test_CT_n_total_'+str(self.n_total)+'_N0_'+str(self.initial_inf)+'_t_start_'+str(self.t_0)+'_eta_'+str(self.test_availables)+'_gamma_'+str(self.gamma)+'_qh_'+str(self.quarantine_household)+'_th_'+str(self.test_household)+'_p_SS_'+str(self.p_SS)+'_p_SM_'+str(self.p_SM)+'_seed_'+str(self.seed)+'_seed_open_ABM_'+str(self.seed_open_ABM)+'_qri_'+str(self.quarantined_random_interactions)
-         
+    def save_results(self, timeseries, t_end):   
+        
+        name = str(self.n_total)+'_N0_'+str(self.initial_inf)+'_t_start_'+str(self.t_0)+'_eta_'+str(self.test_availables)+'_gamma_'+str(self.gamma)+'_qh_'+str(self.quarantine_household)+'_th_'+str(self.test_household)+'_p_SS_'+str(self.p_SS)+'_p_SM_'+str(self.p_SM)+'_seed_'+str(self.seed)+'_seed_open_ABM_'+str(self.seed_open_ABM)+'_qri_'+str(self.quarantined_random_interactions)+'_tst_'+ str(self.test_symptoms_type)+'_qaf_'+str(self.quarantine_adoption_fraction)+'_tpr_'+str(self.tp_rate) + '_tnr_' + str(self.tn_rate) 
+                                  
+        name_file_res = 'timeseries_CT_n_total_'+ name
+        name_data_test = 'data_test_CT_n_total_'+ name 
+        
         df_timeseries = pd.DataFrame(timeseries)
         
         if len(df_timeseries) < t_end:
@@ -176,3 +186,13 @@ class Contact_Tracing:
         
         return df_timeseries
         
+    def save_individuals_results(self, df_indiv):   
+        
+        name = str(self.n_total)+'_N0_'+str(self.initial_inf)+'_t_start_'+str(self.t_0)+'_eta_'+str(self.test_availables)+'_gamma_'+str(self.gamma)+'_qh_'+str(self.quarantine_household)+'_th_'+str(self.test_household)+'_p_SS_'+str(self.p_SS)+'_p_SM_'+str(self.p_SM)+'_seed_'+str(self.seed)+'_seed_open_ABM_'+str(self.seed_open_ABM)+'_qri_'+str(self.quarantined_random_interactions)+'_tst_'+ str(self.test_symptoms_type)+'_qaf_'+str(self.quarantine_adoption_fraction)+'_tpr_'+str(self.tp_rate) + '_tnr_' + str(self.tn_rate) 
+                                  
+        name_file_res = 'df_indiv_CT_n_total_'+ name
+                
+        df_indiv.to_csv(self.output_dir + name_file_res+".csv")        
+        
+        return True
+            
