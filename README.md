@@ -8,7 +8,7 @@ This repository contains four interventions methods to mitigate the propagation 
 + Usual contact tracing ([code here](https://github.com/gbayolo26/risk_estimation/blob/main/intervention_strategies/Contact_Tracing.py))
 - Random selection ([code here](https://github.com/gbayolo26/risk_estimation/blob/main/intervention_strategies/Random_Selection.py))
 
-For more information see paper ([https://hal.science/hal-04267859](https://hal.science/hal-04267859)). 
+For more information see paper ([https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0320291](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0320291)). 
   
  We evaluate the non pharmaceutical interventions based on our risk ranking through simulations of a fairly realistic agent-based model calibrated for COVID-19 epidemic outbreak ([the Oxford OpenABM model](https://github.com/BDI-pathogens/OpenABM-Covid19)). 
  This agent based model simulates the spread of the COVID-19 disease in a population with demographic structure based upon UK census data.  
